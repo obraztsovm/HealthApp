@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+
+            android:title="Главная" />
+        <item
+            android:id="@+id/nav_measurements"
+
+            android:title="Все измерения" />
+        <item
+            android:id="@+id/nav_pressure"
+
+            android:title="Давление" />
+        <item
+            android:id="@+id/nav_pulse"
+
+            android:title="Пульс" />
+        <item
+            android:id="@+id/nav_temperature"
+
+            android:title="Температура" />
+        <item
+            android:id="@+id/nav_vaccination"
+
+            android:title="Прививки" />
+        <item
+            android:id="@+id/nav_weight"
+
+            android:title="Вес" />
+        <item
+            android:id="@+id/nav_statistics"
+
+            android:title="Статистика" />
+    </group>
+</menu>
