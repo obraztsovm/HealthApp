@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Гемоглобин (г/дл)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/editHemoglobin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="12.0-16.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Лейкоциты (×10⁹/л)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editLeukocytes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="4.0-11.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Тромбоциты (×10⁹/л)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editPlatelets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="150-400" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Глюкоза (ммоль/л)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editGlucose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="3.9-6.1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Холестерин (ммоль/л)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editCholesterol"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="до 5.2" />
+
+</LinearLayout>

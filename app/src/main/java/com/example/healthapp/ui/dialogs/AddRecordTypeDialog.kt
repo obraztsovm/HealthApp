@@ -5,11 +5,12 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.example.healthapp.R
+import com.example.healthapp.models.HealthCategory
 
 class AddRecordTypeDialog : DialogFragment() {
 
     interface OnRecordTypeSelectedListener {
-        fun onRecordTypeSelected(type: String)
+        fun onRecordTypeSelected(category: HealthCategory)
     }
 
     private var listener: OnRecordTypeSelectedListener? = null
@@ -19,21 +20,21 @@ class AddRecordTypeDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val types = arrayOf("Давление", "Пульс", "Температура", "Вес", "Прививка", "Кислород")
+        val types = arrayOf("Анализы крови", "Витамины", "Гормоны", "Прививки", "Показатели тела", "Врачи")
 
         return AlertDialog.Builder(requireContext())
-            .setTitle("Выберите тип записи")
+            .setTitle("Выберите категорию")
             .setItems(types) { _, which ->
-                val selectedType = when (which) {
-                    0 -> "PRESSURE"
-                    1 -> "PULSE"
-                    2 -> "TEMPERATURE"  // ← ДОБАВИЛ
-                    3 -> "WEIGHT"       // ← ДОБАВИЛ
-                    4 -> "VACCINATION"
-                    5 -> "OXYGEN"
-                    else -> "PRESSURE"
+                val selectedCategory = when (which) {
+                    0 -> HealthCategory.BLOOD_TESTS
+                    1 -> HealthCategory.VITAMINS
+                    2 -> HealthCategory.HORMONES
+                    3 -> HealthCategory.VACCINATIONS
+                    4 -> HealthCategory.BODY_METRICS
+                    5 -> HealthCategory.DOCTORS_VISITS
+                    else -> HealthCategory.BODY_METRICS
                 }
-                listener?.onRecordTypeSelected(selectedType)
+                listener?.onRecordTypeSelected(selectedCategory)
             }
             .setNegativeButton("Отмена", null)
             .create()

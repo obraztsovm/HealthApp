@@ -10,4 +10,5 @@
     <color name="card_background">#FFFFFF</color>
     <color name="sidebar_background">#1A237E</color>
     <color name="sidebar_text">#FFFFFF</color>
+    <color name="chip_selector">@color/light_blue</color>
 </resources>

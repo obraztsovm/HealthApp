@@ -20,34 +20,42 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
         notifyDataSetChanged()
     }
 
-
-    // Метод для добавления только давления
-    fun setPressureData(pressureRecords: List<BloodPressure>) {
+    // Методы для каждого типа данных
+    fun setBloodTestData(bloodTests: List<BloodTest>) {
         records.clear()
-        records.addAll(pressureRecords)
+        records.addAll(bloodTests)
         notifyDataSetChanged()
     }
+
+    fun setVitaminTestData(vitaminTests: List<VitaminTest>) {
+        records.clear()
+        records.addAll(vitaminTests)
+        notifyDataSetChanged()
+    }
+
+    fun setBodyMetricsData(bodyMetrics: List<BodyMetrics>) {
+        records.clear()
+        records.addAll(bodyMetrics)
+        notifyDataSetChanged()
+    }
+
+    fun setHormoneTestData(hormoneTests: List<HormoneTest>) {
+        records.clear()
+        records.addAll(hormoneTests)
+        notifyDataSetChanged()
+    }
+
+    fun setDoctorVisitData(doctorVisits: List<DoctorVisit>) {
+        records.clear()
+        records.addAll(doctorVisits)
+        notifyDataSetChanged()
+    }
+
     fun removeRecord(position: Int): HealthMetric {
         val removedRecord = records[position]
         records.removeAt(position)
         notifyItemRemoved(position)
         return removedRecord
-    }
-
-
-
-    // Метод для добавления только пульса
-    fun setPulseData(pulseRecords: List<Pulse>) {
-        records.clear()
-        records.addAll(pulseRecords)
-        notifyDataSetChanged()
-    }
-
-    // Метод для добавления только прививок
-    fun setVaccinationData(vaccinationRecords: List<Vaccination>) {
-        records.clear()
-        records.addAll(vaccinationRecords)
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -68,39 +76,55 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
         private val textDate: TextView = itemView.findViewById(R.id.textDate)
 
         fun bind(record: HealthMetric) {
-            textType.text = when (record.type) {
-                MetricType.PRESSURE -> "📊 Давление"
-                MetricType.PULSE -> "💓 Пульс"
-                MetricType.TEMPERATURE -> "🌡️ Температура"  // ← ДОБАВЬ
-                MetricType.WEIGHT -> "⚖️ Вес"              // ← ДОБАВЬ
-                MetricType.VACCINATION -> "💉 Прививка"
-                else -> record.type.name
+            textType.text = when (record.category) {
+                HealthCategory.BLOOD_TESTS -> "🩸 Анализы крови"
+                HealthCategory.VITAMINS -> "💊 Витамины"
+                HealthCategory.HORMONES -> "⚖️ Гормоны"
+                HealthCategory.VACCINATIONS -> "💉 Прививки"
+                HealthCategory.BODY_METRICS -> "📏 Показатели тела"
+                HealthCategory.DOCTORS_VISITS -> "👨‍⚕️ Визит к врачу"
             }
 
             textValue.text = when (record) {
-                is BloodPressure -> "${record.getFormattedPressure()}"
-                is Pulse -> "${record.beatsPerMinute} уд/мин"
-                is Temperature -> "${record.celsius}°C"      // ← ДОБАВЬ
-                is Weight -> "${record.kilograms} кг"        // ← ДОБАВЬ
-                is Vaccination -> "${record.vaccineName} - ${record.dose}"
+                is BloodTest -> formatBloodTest(record)
+                is VitaminTest -> formatVitaminTest(record)
+                is BodyMetrics -> formatBodyMetrics(record)
+                is HormoneTest -> formatHormoneTest(record)
+                is DoctorVisit -> "Др. ${record.doctorName} - ${record.specialization}"
                 else -> record.value.toString()
             }
 
             textDate.text = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault())
                 .format(record.date)
         }
-    }
 
-    // Добавь методы в адаптер для новых типов
-    fun setTemperatureData(temperatureRecords: List<Temperature>) {
-        records.clear()
-        records.addAll(temperatureRecords)
-        notifyDataSetChanged()
-    }
+        private fun formatBloodTest(bloodTest: BloodTest): String {
+            val values = listOfNotNull(
+                bloodTest.hemoglobin?.let { "Hb: ${it}g/dL" },
+                bloodTest.glucose?.let { "Глюкоза: ${it}ммоль/л" }
+            )
+            return values.take(2).joinToString(", ")
+        }
 
-    fun setWeightData(weightRecords: List<Weight>) {
-        records.clear()
-        records.addAll(weightRecords)
-        notifyDataSetChanged()
+        private fun formatVitaminTest(vitaminTest: VitaminTest): String {
+            val values = listOfNotNull(
+                vitaminTest.vitaminD?.let { "D: ${it}нг/мл" },
+                vitaminTest.iron?.let { "Железо: ${it}мкг/дл" }
+            )
+            return values.take(2).joinToString(", ")
+        }
+
+        private fun formatBodyMetrics(bodyMetrics: BodyMetrics): String {
+            return "${bodyMetrics.weight} кг" +
+                    (bodyMetrics.bmi?.let { ", ИМТ: ${String.format("%.1f", it)}" } ?: "")
+        }
+
+        private fun formatHormoneTest(hormoneTest: HormoneTest): String {
+            val values = listOfNotNull(
+                hormoneTest.tsh?.let { "ТТГ: ${it}мкМЕ/мл" },
+                hormoneTest.testosterone?.let { "Тестост.: ${it}нг/дл" }
+            )
+            return values.take(2).joinToString(", ")
+        }
     }
 }

@@ -10,8 +10,8 @@ interface HealthMetricDao {
     @Query("SELECT * FROM health_metrics ORDER BY date DESC")
     fun getAll(): Flow<List<HealthMetricEntity>>
 
-    @Query("SELECT * FROM health_metrics WHERE type = :type ORDER BY date DESC")
-    fun getByType(type: String): Flow<List<HealthMetricEntity>>
+    @Query("SELECT * FROM health_metrics WHERE category = :category ORDER BY date DESC")
+    fun getByCategory(category: String): Flow<List<HealthMetricEntity>>
 
     @Insert
     suspend fun insert(metric: HealthMetricEntity)

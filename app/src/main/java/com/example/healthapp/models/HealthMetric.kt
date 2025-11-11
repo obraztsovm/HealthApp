@@ -4,8 +4,11 @@ import java.util.Date
 
 open class HealthMetric(
     open val id: Long = System.currentTimeMillis(),
-    open val type: MetricType,
+    open val category: HealthCategory,
+    open val subType: String = "",
     open val value: Double,
+    open val unit: String = "",
+    open val referenceRange: String = "",
     open val date: Date = Date(),
     open val notes: String = ""
 ) {

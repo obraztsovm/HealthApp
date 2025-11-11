@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import java.util.Date
 
 class HealthRepository(private val context: Context) {
     private val database = HealthDatabase.getInstance(context)
@@ -16,31 +17,40 @@ class HealthRepository(private val context: Context) {
 
     suspend fun addRecord(record: HealthMetric) {
         val entity = when (record) {
-            is BloodPressure -> HealthMetricEntity(
-                id = record.id, type = MetricType.PRESSURE.name, value = record.value,
-                date = record.date.time, notes = record.notes,
-                systolic = record.systolic, diastolic = record.diastolic, pulseValue = record.pulse
+            is BloodTest -> HealthMetricEntity(
+                id = record.id, category = HealthCategory.BLOOD_TESTS.name,
+                value = 0.0, date = record.date.time, notes = record.notes,
+                hemoglobin = record.hemoglobin, leukocytes = record.leukocytes,
+                platelets = record.platelets, glucose = record.glucose,
+                cholesterol = record.cholesterol
             )
-            is Pulse -> HealthMetricEntity(
-                id = record.id, type = MetricType.PULSE.name, value = record.value,
-                date = record.date.time, notes = record.notes,
-                beatsPerMinute = record.beatsPerMinute
+            is VitaminTest -> HealthMetricEntity(
+                id = record.id, category = HealthCategory.VITAMINS.name,
+                value = 0.0, date = record.date.time, notes = record.notes,
+                vitaminD = record.vitaminD, vitaminB12 = record.vitaminB12,
+                iron = record.iron, magnesium = record.magnesium, calcium = record.calcium
             )
-            is Vaccination -> HealthMetricEntity(
-                id = record.id, type = MetricType.VACCINATION.name, value = 0.0,
-                date = record.date.time, notes = "Вакцина: ${record.vaccineName}, Доза: ${record.dose}, Врач: ${record.doctor}, Место: ${record.location}"
+            is BodyMetrics -> HealthMetricEntity(
+                id = record.id, category = HealthCategory.BODY_METRICS.name,
+                value = record.weight, date = record.date.time, notes = record.notes,
+                weight = record.weight, height = record.height, bmi = record.bmi,
+                waist = record.waist, fatPercentage = record.fatPercentage
             )
-            is Temperature -> HealthMetricEntity(  // ← ДОБАВЬ
-                id = record.id, type = MetricType.TEMPERATURE.name, value = record.celsius,
-                date = record.date.time, notes = record.notes
+            is HormoneTest -> HealthMetricEntity(
+                id = record.id, category = HealthCategory.HORMONES.name,
+                value = 0.0, date = record.date.time, notes = record.notes,
+                tsh = record.tsh, cortisol = record.cortisol,
+                testosterone = record.testosterone, estrogen = record.estrogen
             )
-            is Weight -> HealthMetricEntity(  // ← ДОБАВЬ
-                id = record.id, type = MetricType.WEIGHT.name, value = record.kilograms,
-                date = record.date.time, notes = record.notes
+            is DoctorVisit -> HealthMetricEntity(
+                id = record.id, category = HealthCategory.DOCTORS_VISITS.name,
+                value = 0.0, date = record.date.time, notes = record.notes,
+                doctorName = record.doctorName, specialization = record.specialization,
+                diagnosis = record.diagnosis, nextVisit = record.nextVisit?.time
             )
             else -> HealthMetricEntity(
-                id = record.id, type = record.type.name, value = record.value,
-                date = record.date.time, notes = record.notes
+                id = record.id, category = record.category.name,
+                value = record.value, date = record.date.time, notes = record.notes
             )
         }
         dao.insert(entity)
@@ -55,58 +65,52 @@ class HealthRepository(private val context: Context) {
     }
 
 
-    fun getPressureRecords(): List<BloodPressure> {
+    fun getBloodTests(): List<BloodTest> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.type == MetricType.PRESSURE.name }
-                .map { it.toHealthMetric() as BloodPressure }
+                .filter { it.category == HealthCategory.BLOOD_TESTS.name }
+                .map { it.toHealthMetric() as BloodTest }
         }
     }
 
-    fun getPulseRecords(): List<Pulse> {
+    fun getHormoneTests(): List<HormoneTest> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.type == MetricType.PULSE.name }
-                .map { it.toHealthMetric() as Pulse }
+                .filter { it.category == HealthCategory.HORMONES.name }
+                .map { it.toHealthMetric() as HormoneTest }
         }
     }
 
-    fun getVaccinationRecords(): List<Vaccination> {
+    fun getVitaminTests(): List<VitaminTest> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.type == MetricType.VACCINATION.name }
-                .map { it.toHealthMetric() as Vaccination }
+                .filter { it.category == HealthCategory.BLOOD_TESTS.name }
+                .map { it.toHealthMetric() as VitaminTest }
         }
     }
 
-    // Обнови метод для общего количества
-    fun getRecordsCount(): Int {
-        return runBlocking {
-            dao.getAll().first().size
-        }
-    }
-
-    // Добавь методы для получения записей по типам
-    fun getTemperatureRecords(): List<Temperature> {
+    fun getDoctorVisit(): List<DoctorVisit> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.type == MetricType.TEMPERATURE.name }
-                .map { it.toHealthMetric() as Temperature }
+                .filter { it.category == HealthCategory.BLOOD_TESTS.name }
+                .map { it.toHealthMetric() as DoctorVisit }
         }
     }
 
-    fun getWeightRecords(): List<Weight> {
+    fun getBodyMetrics(): List<BodyMetrics> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.type == MetricType.WEIGHT.name }
-                .map { it.toHealthMetric() as Weight }
+                .filter { it.category == HealthCategory.BODY_METRICS.name }
+                .map { it.toHealthMetric() as BodyMetrics }
         }
     }
+
+
 
 
 
@@ -132,29 +136,35 @@ class HealthRepository(private val context: Context) {
 
 // Extension function
 private fun HealthMetricEntity.toHealthMetric(): HealthMetric {
-    return when (type) {
-        MetricType.PRESSURE.name -> BloodPressure(
-            systolic = systolic ?: 0, diastolic = diastolic ?: 0, pulse = pulseValue ?: 0,
-            id = id, date = java.util.Date(date), notes = notes
+    return when (category) {
+        HealthCategory.BLOOD_TESTS.name -> BloodTest(
+            hemoglobin = hemoglobin, leukocytes = leukocytes,
+            platelets = platelets, glucose = glucose, cholesterol = cholesterol,
+            id = id, date = Date(date), notes = notes
         )
-        MetricType.PULSE.name -> Pulse(
-            beatsPerMinute = beatsPerMinute ?: 0,
-            id = id, date = java.util.Date(date), notes = notes
+        HealthCategory.VITAMINS.name -> VitaminTest(
+            vitaminD = vitaminD, vitaminB12 = vitaminB12,
+            iron = iron, magnesium = magnesium, calcium = calcium,
+            id = id, date = Date(date), notes = notes
         )
-        MetricType.VACCINATION.name -> Vaccination(
-            vaccineName = extractVaccineName(notes), dose = extractDose(notes),
-            doctor = extractDoctor(notes), location = extractLocation(notes),
-            id = id, date = java.util.Date(date), notes = notes
+        HealthCategory.BODY_METRICS.name -> BodyMetrics(
+            weight = weight ?: 0.0, height = height,
+            bmi = bmi, waist = waist, fatPercentage = fatPercentage,
+            id = id, date = Date(date), notes = notes
         )
-        MetricType.TEMPERATURE.name -> Temperature(  // ← ДОБАВЬ
-            celsius = value, id = id, date = java.util.Date(date), notes = notes
+        HealthCategory.HORMONES.name -> HormoneTest(
+            tsh = tsh, cortisol = cortisol,
+            testosterone = testosterone, estrogen = estrogen,
+            id = id, date = Date(date), notes = notes
         )
-        MetricType.WEIGHT.name -> Weight(  // ← ДОБАВЬ
-            kilograms = value, id = id, date = java.util.Date(date), notes = notes
+        HealthCategory.DOCTORS_VISITS.name -> DoctorVisit(
+            doctorName = doctorName, specialization = specialization,
+            diagnosis = diagnosis, nextVisit = nextVisit?.let { Date(it) },
+            id = id, date = Date(date), notes = notes
         )
         else -> HealthMetric(
-            id = id, type = MetricType.valueOf(type), value = value,
-            date = java.util.Date(date), notes = notes
+            id = id, category = HealthCategory.valueOf(category),
+            value = value, date = Date(date), notes = notes
         )
     }
 }

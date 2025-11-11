@@ -9,7 +9,7 @@ import com.example.healthapp.data.entity.HealthMetricEntity
 
 @Database(
     entities = [HealthMetricEntity::class],
-    version = 1,
+    version = 2,  // Меняем с 1 на 2
     exportSchema = false
 )
 abstract class HealthDatabase : RoomDatabase() {
@@ -25,7 +25,9 @@ abstract class HealthDatabase : RoomDatabase() {
                     context.applicationContext,
                     HealthDatabase::class.java,
                     "health_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()  // Временно для разработки
+                    .build()
                 INSTANCE = instance
                 instance
             }

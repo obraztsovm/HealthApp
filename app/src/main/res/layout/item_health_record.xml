@@ -17,7 +17,7 @@
             android:id="@+id/textType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Давление"
+            android:text="Тип записи"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2C3E50" />
@@ -26,7 +26,7 @@
             android:id="@+id/textValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="120/80 (75 уд.)"
+            android:text="Значение"
             android:textSize="14sp"
             android:textColor="#7F8C8D" />
 

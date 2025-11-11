@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-class PressureFragment : Fragment() {
+class SimpleRecordsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -16,3 +16,4 @@ class PressureFragment : Fragment() {
         return inflater.inflate(android.R.layout.simple_list_item_1, container, false)
     }
 }
+

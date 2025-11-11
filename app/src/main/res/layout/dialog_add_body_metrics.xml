@@ -8,56 +8,60 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Название вакцины"
+        android:text="Вес (кг)"
         android:textSize="14sp"
         android:layout_marginBottom="4dp" />
 
     <EditText
-        android:id="@+id/editVaccineName"
+        android:id="@+id/editWeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Например: COVID-19"
-        android:layout_marginBottom="16dp" />
+        android:inputType="numberDecimal"
+        android:hint="70.0" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Доза"
+        android:text="Рост (м)"
         android:textSize="14sp"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
 
     <EditText
-        android:id="@+id/editDose"
+        android:id="@+id/editHeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Например: 1 доза"
-        android:layout_marginBottom="16dp" />
+        android:inputType="numberDecimal"
+        android:hint="1.75" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Врач (опционально)"
+        android:text="Объем талии (см)"
         android:textSize="14sp"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
 
     <EditText
-        android:id="@+id/editDoctor"
+        android:id="@+id/editWaist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ФИО врача"
-        android:layout_marginBottom="16dp" />
+        android:inputType="numberDecimal"
+        android:hint="80.0" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Место (опционально)"
+        android:text="Процент жира (%)"
         android:textSize="14sp"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
 
     <EditText
-        android:id="@+id/editLocation"
+        android:id="@+id/editFatPercentage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Поликлиника №1" />
+        android:inputType="numberDecimal"
+        android:hint="20.0" />
 
 </LinearLayout>
