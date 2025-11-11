@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.healthapp.MainActivity
 import com.example.healthapp.R
+import com.example.healthapp.models.HealthCategory
+import com.example.healthapp.ui.dialogs.AddRecordTypeDialog
 
-class DashboardFragment : Fragment() {
+class DashboardFragment : Fragment(), AddRecordTypeDialog.OnRecordTypeSelectedListener {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,10 +21,20 @@ class DashboardFragment : Fragment() {
 
         val addButton = view.findViewById<android.widget.Button>(R.id.addRecordButton)
         addButton.setOnClickListener {
-            // Пока просто покажем сообщение
-            android.widget.Toast.makeText(requireContext(), "Добавить запись", android.widget.Toast.LENGTH_SHORT).show()
+            showRecordTypeDialog()
         }
 
         return view
+    }
+
+    private fun showRecordTypeDialog() {
+        val dialog = AddRecordTypeDialog()
+        dialog.setOnRecordTypeSelectedListener(this)
+        dialog.show(parentFragmentManager, "RecordTypeDialog")
+    }
+
+    override fun onRecordTypeSelected(category: HealthCategory) {
+        // Делегируем в MainActivity
+        (activity as? MainActivity)?.onRecordTypeSelected(category)
     }
 }

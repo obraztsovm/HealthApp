@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Название вакцины"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/editVaccineName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Спутник V, Pfizer и т.д." />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Доза"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editDose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="1 доза, 2 доза, бустер" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Врач"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editDoctor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ФИО врача" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Место вакцинации"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Поликлиника №1, Медцентр и т.д." />
+
+</LinearLayout>

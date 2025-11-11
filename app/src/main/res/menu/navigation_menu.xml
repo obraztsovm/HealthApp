@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_dashboard" android:title="Главная" />
-        <item android:id="@+id/nav_measurements" android:title="Все измерения" />
         <item android:id="@+id/nav_blood_tests" android:title="Анализы крови" />
         <item android:id="@+id/nav_vitamins" android:title="Витамины" />
+        <item android:id="@+id/nav_hormones" android:title="Гормоны" />
         <item android:id="@+id/nav_body_metrics" android:title="Показатели тела" />
         <item android:id="@+id/nav_doctors" android:title="Врачи" />
-        <!-- Пока уберем vaccinations, добавим позже -->
+        <item android:id="@+id/nav_vaccinations" android:title="Прививки" />
     </group>
 </menu>

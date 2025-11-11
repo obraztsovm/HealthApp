@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ТТГ (мкМЕ/мл)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/editTSH"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="0.4-4.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Кортизол (нг/мл)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editCortisol"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="4.3-22.4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Тестостерон (нг/дл)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editTestosterone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="270-1070" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Эстроген (пг/мл)"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editEstrogen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="15-350" />
+
+</LinearLayout>
