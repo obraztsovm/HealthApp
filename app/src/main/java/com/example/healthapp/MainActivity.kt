@@ -155,6 +155,8 @@ class MainActivity : AppCompatActivity(),
         Toast.makeText(this, "Прививка добавлена", Toast.LENGTH_SHORT).show()
     }
 
+    
+
 
 
     // Обработчики добавления записей

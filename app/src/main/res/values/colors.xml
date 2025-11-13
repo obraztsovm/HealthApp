@@ -11,4 +11,9 @@
     <color name="sidebar_background">#1A237E</color>
     <color name="sidebar_text">#FFFFFF</color>
     <color name="chip_selector">@color/light_blue</color>
+    <color name="chart_blue">#1565C0</color>
+    <color name="chart_red">#FF6B6B</color>
+    <color name="chart_teal">#4ECDC4</color>
+    <color name="chart_light_blue">#45B7D1</color>
+    <color name="chart_fill">#E3F2FD</color>
 </resources>
