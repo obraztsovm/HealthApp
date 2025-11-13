@@ -9,7 +9,7 @@ import com.example.healthapp.data.entity.HealthMetricEntity
 
 @Database(
     entities = [HealthMetricEntity::class],
-    version = 2,  // Меняем с 1 на 2
+    version = 3,
     exportSchema = false
 )
 abstract class HealthDatabase : RoomDatabase() {

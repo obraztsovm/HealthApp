@@ -13,41 +13,11 @@ import java.util.*
 class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>() {
 
     private val records = mutableListOf<HealthMetric>()
+    var onItemDelete: ((position: Int) -> Unit)? = null
 
     fun setData(newRecords: List<HealthMetric>) {
         records.clear()
         records.addAll(newRecords)
-        notifyDataSetChanged()
-    }
-
-    // Методы для каждого типа данных
-    fun setBloodTestData(bloodTests: List<BloodTest>) {
-        records.clear()
-        records.addAll(bloodTests)
-        notifyDataSetChanged()
-    }
-
-    fun setVitaminTestData(vitaminTests: List<VitaminTest>) {
-        records.clear()
-        records.addAll(vitaminTests)
-        notifyDataSetChanged()
-    }
-
-    fun setBodyMetricsData(bodyMetrics: List<BodyMetrics>) {
-        records.clear()
-        records.addAll(bodyMetrics)
-        notifyDataSetChanged()
-    }
-
-    fun setHormoneTestData(hormoneTests: List<HormoneTest>) {
-        records.clear()
-        records.addAll(hormoneTests)
-        notifyDataSetChanged()
-    }
-
-    fun setDoctorVisitData(doctorVisits: List<DoctorVisit>) {
-        records.clear()
-        records.addAll(doctorVisits)
         notifyDataSetChanged()
     }
 
@@ -70,7 +40,7 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
 
     override fun getItemCount() = records.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textType: TextView = itemView.findViewById(R.id.textType)
         private val textValue: TextView = itemView.findViewById(R.id.textValue)
         private val textDate: TextView = itemView.findViewById(R.id.textDate)
@@ -80,7 +50,7 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
                 HealthCategory.BLOOD_TESTS -> "🩸 Анализы крови"
                 HealthCategory.VITAMINS -> "💊 Витамины"
                 HealthCategory.HORMONES -> "⚖️ Гормоны"
-                HealthCategory.VACCINATIONS -> "💉 Прививки"
+                HealthCategory.VACCINATIONS -> "💉 Прививка"
                 HealthCategory.BODY_METRICS -> "📏 Показатели тела"
                 HealthCategory.DOCTORS_VISITS -> "👨‍⚕️ Визит к врачу"
             }
@@ -88,14 +58,22 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
             textValue.text = when (record) {
                 is BloodTest -> formatBloodTest(record)
                 is VitaminTest -> formatVitaminTest(record)
-                is BodyMetrics -> formatBodyMetrics(record)
                 is HormoneTest -> formatHormoneTest(record)
+                is Vaccination -> "${record.vaccineName} - ${record.dose}"
+                is BodyMetrics -> "${record.weight} кг" +
+                        (record.bmi?.let { ", ИМТ: ${String.format("%.1f", it)}" } ?: "")
                 is DoctorVisit -> "Др. ${record.doctorName} - ${record.specialization}"
                 else -> record.value.toString()
             }
 
             textDate.text = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault())
                 .format(record.date)
+
+            // Долгое нажатие для удаления
+            itemView.setOnLongClickListener {
+                onItemDelete?.invoke(adapterPosition)
+                true
+            }
         }
 
         private fun formatBloodTest(bloodTest: BloodTest): String {
@@ -114,11 +92,6 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
             return values.take(2).joinToString(", ")
         }
 
-        private fun formatBodyMetrics(bodyMetrics: BodyMetrics): String {
-            return "${bodyMetrics.weight} кг" +
-                    (bodyMetrics.bmi?.let { ", ИМТ: ${String.format("%.1f", it)}" } ?: "")
-        }
-
         private fun formatHormoneTest(hormoneTest: HormoneTest): String {
             val values = listOfNotNull(
                 hormoneTest.tsh?.let { "ТТГ: ${it}мкМЕ/мл" },
@@ -126,5 +99,7 @@ class HealthRecordAdapter : RecyclerView.Adapter<HealthRecordAdapter.ViewHolder>
             )
             return values.take(2).joinToString(", ")
         }
+
+        
     }
 }

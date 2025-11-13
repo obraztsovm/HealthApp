@@ -52,46 +52,50 @@ class MainActivity : AppCompatActivity(),
                     showFragment(DashboardFragment())
                     binding.toolbar.title = "HealthTracker"
                 }
-
                 R.id.nav_blood_tests -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("BLOOD_TESTS")
                     binding.toolbar.title = "Анализы крови"
                 }
-
                 R.id.nav_vitamins -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("VITAMINS")
                     binding.toolbar.title = "Витамины"
                 }
-
                 R.id.nav_hormones -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("HORMONES")
                     binding.toolbar.title = "Гормоны"
                 }
-
                 R.id.nav_body_metrics -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("BODY_METRICS")
                     binding.toolbar.title = "Показатели тела"
                 }
-
                 R.id.nav_doctors -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("DOCTORS_VISITS")
                     binding.toolbar.title = "Врачи"
                 }
-
                 R.id.nav_vaccinations -> {
-                    showFragment(SimpleRecordsFragment())
+                    showRecordsFragment("VACCINATIONS")
                     binding.toolbar.title = "Прививки"
                 }
             }
             drawerLayout.closeDrawers()
             true
         }
+
     }
 
     private fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.content_frame, fragment)
             .commit()
+    }
+
+    private fun showRecordsFragment(category: String) {
+        val fragment = RecordsFragment().apply {
+            arguments = Bundle().apply {
+                putString("category", category)
+            }
+        }
+        showFragment(fragment)
     }
 
 

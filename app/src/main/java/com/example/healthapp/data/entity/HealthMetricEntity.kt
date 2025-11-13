@@ -47,5 +47,10 @@ data class HealthMetricEntity(
     val doctorName: String = "",
     val specialization: String = "",
     val diagnosis: String = "",
-    val nextVisit: Long? = null
+    val nextVisit: Long? = null,
+
+    // Для прививок
+    val vaccineName: String = "",
+    val dose: String = "",
+    val location: String = ""
 )

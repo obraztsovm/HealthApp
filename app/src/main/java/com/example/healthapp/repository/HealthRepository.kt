@@ -65,12 +65,22 @@ class HealthRepository(private val context: Context) {
     }
 
 
+
+
+
+
     fun getBloodTests(): List<BloodTest> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
                 .filter { it.category == HealthCategory.BLOOD_TESTS.name }
-                .map { it.toHealthMetric() as BloodTest }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? BloodTest
+                    } catch (e: Exception) {
+                        null // Пропускаем некорректные записи
+                    }
+                }
         }
     }
 
@@ -79,7 +89,13 @@ class HealthRepository(private val context: Context) {
             val entities = dao.getAll().first()
             entities
                 .filter { it.category == HealthCategory.HORMONES.name }
-                .map { it.toHealthMetric() as HormoneTest }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? HormoneTest
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
         }
     }
 
@@ -87,17 +103,44 @@ class HealthRepository(private val context: Context) {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.category == HealthCategory.BLOOD_TESTS.name }
-                .map { it.toHealthMetric() as VitaminTest }
+                .filter { it.category == HealthCategory.VITAMINS.name }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? VitaminTest
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
         }
     }
 
-    fun getDoctorVisit(): List<DoctorVisit> {
+    fun getDoctorVisits(): List<DoctorVisit> {
         return runBlocking {
             val entities = dao.getAll().first()
             entities
-                .filter { it.category == HealthCategory.BLOOD_TESTS.name }
-                .map { it.toHealthMetric() as DoctorVisit }
+                .filter { it.category == HealthCategory.DOCTORS_VISITS.name }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? DoctorVisit
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+        }
+    }
+
+    fun getVaccinationRecords(): List<Vaccination> {
+        return runBlocking {
+            val entities = dao.getAll().first()
+            entities
+                .filter { it.category == HealthCategory.VACCINATIONS.name }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? Vaccination
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
         }
     }
 
@@ -106,7 +149,13 @@ class HealthRepository(private val context: Context) {
             val entities = dao.getAll().first()
             entities
                 .filter { it.category == HealthCategory.BODY_METRICS.name }
-                .map { it.toHealthMetric() as BodyMetrics }
+                .mapNotNull {
+                    try {
+                        it.toHealthMetric() as? BodyMetrics
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
         }
     }
 
@@ -132,6 +181,8 @@ class HealthRepository(private val context: Context) {
             dao.deleteById(recordId)
         }
     }
+
+
 }
 
 // Extension function
@@ -155,6 +206,13 @@ private fun HealthMetricEntity.toHealthMetric(): HealthMetric {
         HealthCategory.HORMONES.name -> HormoneTest(
             tsh = tsh, cortisol = cortisol,
             testosterone = testosterone, estrogen = estrogen,
+            id = id, date = Date(date), notes = notes
+        )
+        HealthCategory.VACCINATIONS.name -> Vaccination(
+            vaccineName = extractVaccineName(notes),
+            dose = extractDose(notes),
+            doctor = extractDoctor(notes),
+            location = extractLocation(notes),
             id = id, date = Date(date), notes = notes
         )
         HealthCategory.DOCTORS_VISITS.name -> DoctorVisit(
