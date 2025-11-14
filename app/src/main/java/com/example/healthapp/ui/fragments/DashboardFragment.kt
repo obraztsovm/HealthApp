@@ -8,11 +8,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.healthapp.MainActivity
+import com.github.mikephil.charting.data.RadarEntry
+import com.github.mikephil.charting.data.RadarDataSet
+import com.github.mikephil.charting.data.RadarData
 import com.example.healthapp.R
 import com.example.healthapp.databinding.FragmentDashboardBinding
 import com.example.healthapp.models.HealthCategory
 import com.example.healthapp.repository.HealthRepository
 import com.example.healthapp.ui.dialogs.AddRecordTypeDialog
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
@@ -68,16 +72,26 @@ class DashboardFragment : Fragment(), AddRecordTypeDialog.OnRecordTypeSelectedLi
     }
 
     private fun setupCharts() {
+        setupStatisticsCards()
         setupWeightChart()
         setupBloodChart()
         setupPieChart()
+        setupSparklineCharts()
+        setupRadarChart()
+        setupProgressChart()
+        setupHeatMap()
     }
 
     // Обновляем все графики
     private fun refreshAllCharts() {
+        setupStatisticsCards()
         setupWeightChart()
         setupBloodChart()
         setupPieChart()
+        setupSparklineCharts()
+        setupRadarChart()
+        setupProgressChart()
+        setupHeatMap()
     }
 
     private fun setupWeightChart() {
@@ -266,7 +280,209 @@ class DashboardFragment : Fragment(), AddRecordTypeDialog.OnRecordTypeSelectedLi
     }
 
 
+    private fun setupSparklineCharts() {
+        setupSparklineWeight()
+        setupSparklineGlucose()
+    }
 
+    private fun setupSparklineWeight() {
+        val weights = repository.getBodyMetrics().takeLast(7).map { it.weight.toFloat() }
+        if (weights.size >= 2) {
+            val entries = weights.mapIndexed { index, weight -> Entry(index.toFloat(), weight) }
+            val dataSet = LineDataSet(entries, "").apply {
+                color = Color.parseColor("#1565C0")
+                lineWidth = 2f
+                setDrawCircles(false)
+                setDrawValues(false)
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+            }
+            binding.sparklineWeight.data = LineData(dataSet)
+            setupSparklineAppearance(binding.sparklineWeight)
+        }
+    }
+
+    private fun setupSparklineGlucose() {
+        val glucoseValues = repository.getBloodTests().takeLast(7).mapNotNull { it.glucose?.toFloat() }
+        if (glucoseValues.size >= 2) {
+            val entries = glucoseValues.mapIndexed { index, value -> Entry(index.toFloat(), value) }
+            val dataSet = LineDataSet(entries, "").apply {
+                color = Color.parseColor("#FF6B6B")
+                lineWidth = 2f
+                setDrawCircles(false)
+                setDrawValues(false)
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+            }
+            binding.sparklineGlucose.data = LineData(dataSet)
+            setupSparklineAppearance(binding.sparklineGlucose)
+        }
+    }
+
+    private fun setupSparklineAppearance(chart: LineChart) {
+        chart.description.isEnabled = false
+        chart.legend.isEnabled = false
+        chart.setTouchEnabled(false)
+        chart.setDrawGridBackground(false)
+        chart.xAxis.isEnabled = false
+        chart.axisLeft.isEnabled = false
+        chart.axisRight.isEnabled = false
+        chart.invalidate()
+    }
+
+    private fun setupRadarChart() {
+        val latestBlood = repository.getBloodTests().lastOrNull()
+        val latestVitamins = repository.getVitaminTests().lastOrNull()
+
+        // Используем RadarEntry вместо Entry
+        val entries = ArrayList<RadarEntry>()
+
+        latestBlood?.hemoglobin?.toFloat()?.let { entries.add(RadarEntry(it)) }
+        latestBlood?.glucose?.toFloat()?.let { entries.add(RadarEntry(it)) }
+        latestVitamins?.vitaminD?.toFloat()?.let { entries.add(RadarEntry(it)) }
+        latestVitamins?.iron?.toFloat()?.let { entries.add(RadarEntry(it)) }
+
+        if (entries.isNotEmpty()) {
+            val dataSet = RadarDataSet(entries, "Показатели").apply {
+                color = Color.parseColor("#FF6B6B")
+                fillColor = Color.parseColor("#30FF6B6B")
+                setDrawFilled(true)
+                lineWidth = 2f
+                setDrawValues(false)
+            }
+
+            binding.radarChart.data = RadarData(dataSet)
+            binding.radarChart.webLineWidth = 1f
+            binding.radarChart.description.isEnabled = false
+            binding.radarChart.legend.isEnabled = false
+
+            // Настройка осей
+            val xAxis = binding.radarChart.xAxis
+            xAxis.valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return when (value.toInt()) {
+                        0 -> "Гемоглобин"
+                        1 -> "Глюкоза"
+                        2 -> "Витамин D"
+                        3 -> "Железо"
+                        else -> ""
+                    }
+                }
+            }
+
+            binding.radarChart.animateXY(1000, 1000)
+        } else {
+            binding.radarChart.clear()
+            binding.radarChart.data = null
+        }
+        binding.radarChart.invalidate()
+    }
+
+    private fun setupProgressChart() {
+        val totalRecords = repository.getAllRecordsBlocking().size
+        val weeklyRecords = repository.getAllRecordsBlocking()
+            .count { record ->
+                val weekAgo = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -7) }.time
+                record.date.after(weekAgo)
+            }
+
+        val goal = 10 // Целевое количество записей в неделю
+        val progress = if (weeklyRecords < goal) weeklyRecords.toFloat() else goal.toFloat() // Заменяем min()
+
+        val entries = listOf(
+            PieEntry(progress, "Выполнено"),
+            PieEntry((goal - progress).toFloat(), "Осталось")
+        )
+
+        val dataSet = PieDataSet(entries, "").apply {
+            colors = listOf(Color.parseColor("#4ECDC4"), Color.parseColor("#E0E0E0"))
+            setDrawValues(false)
+        }
+
+        binding.progressChart.data = PieData(dataSet)
+        binding.progressChart.description.isEnabled = false
+        binding.progressChart.legend.isEnabled = false
+        binding.progressChart.setDrawEntryLabels(false)
+        binding.progressChart.setUsePercentValues(false)
+        binding.progressChart.setDrawHoleEnabled(true)
+        binding.progressChart.holeRadius = 60f
+        binding.progressChart.transparentCircleRadius = 0f
+        binding.progressChart.setHoleColor(Color.TRANSPARENT)
+
+        binding.progressText.text = "$weeklyRecords из $goal записей за неделю"
+        binding.progressChart.invalidate()
+    }
+
+    private fun setupStatisticsCards() {
+        val totalRecords = repository.getAllRecordsBlocking().size
+        val weeklyRecords = repository.getAllRecordsBlocking()
+            .count { record ->
+                val weekAgo = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -7) }.time
+                record.date.after(weekAgo)
+            }
+
+        binding.totalRecordsText.text = totalRecords.toString()
+        binding.lastWeekText.text = weeklyRecords.toString()
+    }
+
+    private fun setupHeatMap() {
+        val records = repository.getAllRecordsBlocking()
+        val dayCounts = MutableList(7) { 0 }
+
+        records.forEach { record ->
+            val calendar = Calendar.getInstance().apply { time = record.date }
+            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1 // 0-6 (воскресенье=0)
+            dayCounts[dayOfWeek] = dayCounts[dayOfWeek] + 1
+        }
+
+        val entries = dayCounts.mapIndexed { index, count -> BarEntry(index.toFloat(), count.toFloat()) }
+
+        if (entries.any { it.y > 0 }) {
+            val dataSet = BarDataSet(entries, "Активность").apply {
+                colors = dayCounts.map { count ->
+                    when {
+                        count >= 5 -> Color.parseColor("#1565C0")
+                        count >= 3 -> Color.parseColor("#42A5F5")
+                        count >= 1 -> Color.parseColor("#90CAF9")
+                        else -> Color.parseColor("#E3F2FD")
+                    }
+                }
+                setDrawValues(false)
+            }
+
+            binding.heatMapChart.data = BarData(dataSet)
+            binding.heatMapChart.description.isEnabled = false
+            binding.heatMapChart.legend.isEnabled = false
+            binding.heatMapChart.setTouchEnabled(false)
+            binding.heatMapChart.setDrawGridBackground(false)
+
+            val xAxis = binding.heatMapChart.xAxis
+            xAxis.valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return when (value.toInt()) {
+                        0 -> "Вс"
+                        1 -> "Пн"
+                        2 -> "Вт"
+                        3 -> "Ср"
+                        4 -> "Чт"
+                        5 -> "Пт"
+                        6 -> "Сб"
+                        else -> ""
+                    }
+                }
+            }
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.setDrawGridLines(false)
+            xAxis.granularity = 1f
+
+            binding.heatMapChart.axisLeft.setDrawGridLines(false)
+            binding.heatMapChart.axisRight.isEnabled = false
+
+            binding.heatMapChart.animateY(1000)
+        } else {
+            binding.heatMapChart.clear()
+            binding.heatMapChart.data = null
+        }
+        binding.heatMapChart.invalidate()
+    }
 
 
     override fun onRecordTypeSelected(category: HealthCategory) {

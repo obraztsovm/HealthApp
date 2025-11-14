@@ -16,4 +16,7 @@
     <color name="chart_teal">#4ECDC4</color>
     <color name="chart_light_blue">#45B7D1</color>
     <color name="chart_fill">#E3F2FD</color>
+    <color name="chart_green">#96CEB4</color>
+    <color name="chart_yellow">#FFEAA7</color>
+    <color name="chart_purple">#DDA0DD</color>
 </resources>
